@@ -11,21 +11,22 @@ static item_t* _item_pool = NULL;
 
 static void item_new(item_t* item){
 	item->name = malloc(sizeof(char) * 16);
-	item->disp_name = malloc(sizeof(char) * 32);
+	item->display_name = malloc(sizeof(char) * 32);
 	item->description = malloc(sizeof(char) * 64);
 }
 
 static void item_delete(item_t* item){
 	free(item->name);
-	free(item->disp_name);
+	free(item->display_name);
 	free(item->description);
 }
 
 static void item_parse(item_t* item, const char* str){
 	size_t nextPos = 0;
 	nextPos = strbex(str, item->name, nextPos);
-	nextPos = strqex(str, item->disp_name, nextPos);
+	nextPos = strqex(str, item->display_name, nextPos);
 	nextPos = strqex(str, item->description, nextPos);
+	nextPos = striex(str, (int*) &item->type, nextPos);
 	nextPos = striex(str, (int*) &item->mod1, nextPos);
 	nextPos = striex(str, &item->val1, nextPos);
 	nextPos = striex(str, (int*) &item->mod2, nextPos);
@@ -33,7 +34,7 @@ static void item_parse(item_t* item, const char* str){
 	nextPos = striex(str, (int*) &item->mod3, nextPos);
 	nextPos = striex(str, &item->val3, nextPos);
 	nextPos = striex(str, &item->duration, nextPos);
-	striex(str, &item->cooldown, nextPos);
+	striex(str, &item->cool_down, nextPos);
 	// any trailing characters are ignored
 }
 
@@ -48,11 +49,11 @@ const item_t* item_get(const char* name){
 	return NULL;
 }
 
-void item_init(){
+bool item_init(){
 	FILE* fp = fopen("assets/items", "r");
 	if(fp == NULL){
 		log("cannot open items file!");
-		return;
+		return false;
 	}
 	char buf[128];
 	int count = 0;
@@ -63,7 +64,7 @@ void item_init(){
 	_item_pool = malloc(sizeof(item_t) * count);
 	if(_item_pool == NULL){
 		log("Cannot allocate item pool!");
-		return;
+		return false;
 	}
 	_item_count = count;
 	fseek(fp, 0, SEEK_SET);
@@ -75,6 +76,7 @@ void item_init(){
 		++count;
 	}
 	printf("|Item> %d items loaded\n", count);
+	return true;
 }
 
 void item_finalize(){

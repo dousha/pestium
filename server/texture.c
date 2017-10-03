@@ -8,12 +8,12 @@
 static int _texture_count = 0;
 static texture_t* _texture_poll = NULL;
 
-void texture_init(){
+bool texture_init(){
 	char buf[64];
 	FILE* fp = fopen("assets/texture", "r");
 	if(fp == NULL){
 		log("Cannot open texture");
-		return;
+		return false;
 	}
 	int i = 0;
 	while(fgets(buf, 64, fp) != NULL){
@@ -22,8 +22,8 @@ void texture_init(){
 	}
 	_texture_poll = malloc(sizeof(texture_t) * i);
 	if(_texture_poll == NULL){
-		log("Cannot allocate texture poll! Exiting...");
-		exit(-1);
+		log("Cannot allocate texture poll!");
+		return false;
 	}
 	fseek(fp, 0, SEEK_SET);
 	int fg, bg, count = 0;
@@ -39,6 +39,7 @@ void texture_init(){
 	}
 	printf("|Texture> %d textures loaded\n", count);
 	_texture_count = count;
+	return true;
 }
 
 const texture_t* texture_get(const char* name){

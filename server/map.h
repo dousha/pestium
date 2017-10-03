@@ -3,9 +3,9 @@
 
 #include "types.h"
 
-extern bool map_load();
+extern bool map_init();
 extern map_t* map_get(const char*);
 extern map_t* map_get_id(unsigned int);
-extern bool map_set(const char*, const map_t*);
+extern void map_finalize();
 
 #endif

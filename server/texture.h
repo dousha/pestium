@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-extern void texture_init();
+extern bool texture_init();
 extern const texture_t* texture_get(const char*);
 extern void texture_finalize();
 

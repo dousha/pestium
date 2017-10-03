@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-extern void item_init();
+extern bool item_init();
 extern const item_t* item_get(const char*);
 extern void item_finalize();
 
